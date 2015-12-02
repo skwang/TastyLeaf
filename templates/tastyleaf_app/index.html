@@ -6,14 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TigreData</title>
-    <meta name="description" content="Data Visualization of Princeton Tigers">
+    <title>The Transit Lounge</title>
+    <meta name="description" content="AAS274 Project">
     <meta name="author" content="skwang">
-    <link rel="shortcut icon" type="image/x-icon" href=" {% static "img/ticon.png" %}">
+    <link rel="shortcut icon" type="image/x-icon" href=" {% static "img/home-icon.png" %}">
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link href="{% static "css/index.css" %}" rel="stylesheet">
+    <link href="{% static "css/landing-page.css" %}" rel="stylesheet">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -35,75 +36,29 @@
 <body>
     <header id="top" class="header">
         <div class="text-vertical-center">
+            
             <div class="column-box">
                 <div class="column">
-                    <h2><p>TigreData</p></h2>
-                    <p>A data visualizer for Princeton students. Click the search button to get started.</p>
-                    <p><btn class="btn btn-start btn-lg">See a tutorial</btn></p>
-                    
+                    <h2><p>The Transit Lounge</p></h2>
+                    <p>A HONY-inspired collection of stories of Princeton students</p>
                 </div>
         
                 <div class="column column-top-padding">
-                    <div id="sb-search" class="sb-search col-xs-6">
-                        <form>
-                            <input class="sb-search-input" placeholder="Enter a hall..." 
-                                    type="text" value="" name="search" id="dorm_search">
-                            <input class="sb-search-submit btn-start" type="submit" value=""
-                                    id="dorm_search_btn">
-                            <span class="sb-icon-search"></span>
-                        </form>
+                    <div class="col-xs-6">
+                        <btn class="btn btn-start btn-lg" style="float: right;" id="findBtn">
+                            Find a story</btn>
+                    </div>
+                    <div class="col-xs-6">
+                        <btn class="btn btn-start btn-lg" style="float: left;" id="shareBtn">
+                            Share my story</btn>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div id="graph" class="row">
-        <div class="col-xs-12">
-            <h1 class="graph-title"></h1>
-            <div id="dorm-graph"></div>
-        </div>
-    </div>
-
-    
-
-    <!--For the search bar-->
-    <script src="{% static "js/classie.js" %}"></script>
-    <script src="{% static "js/uisearch.js" %}"></script>
     <script>
-        new UISearch( document.getElementById( 'sb-search' ) );
-
-        /* -------------- For handling autocomplete for the dorm search -------------- */
-        var dorm_data;        // stores list of dorms from server
-        var autocompleteDorm; // autocomplete function 
-        // retrieve from server with AJAX call 
-        $.when($.get('/dorm-list/', function(result){
-            dorm_data = result;
-        })).then(function(){
-            autocompleteDorm = function autocompleteDorm(input) {
-                $(input).autocomplete({
-                    source: function(request, response) {
-                        var query = $(input).val().toLowerCase();
-                        var matches = [];
-                        for (var i in dorm_data["dorm_list"]) {
-                            var hallname = dorm_data["dorm_list"][i];
-                            if (hallname.toLowerCase().indexOf(query) == 0)
-                                matches.push({'label': hallname});
-                        }
-                        function compare(a,b) {
-                            if (a.label < b.label)
-                                return -1;
-                            if (a.label > b.label)
-                                return 1;
-                            return 0;
-                        }
-                        matches.sort(compare);
-                        response(matches);
-                    }
-                });
-            };
-            autocompleteDorm("#dorm_search")
-        });
+        
 
         /* -------------- For handling popup after dorm search is clicked -------------- */
         // When called will shake the jquery object obj and turn its text red
@@ -120,103 +75,220 @@
         });
 
         // Event handler for when the search btn is clicked
-        $('#dorm_search_btn').click(function(e){
+        $('#findBtn').click(function(e){
             e.preventDefault();
-            // Compare value to something in the list. If not there,
-            // shake the textfield and return. 
-            var query = $("#dorm_search").val();
-            var foundMatch = ""; // the correctly capitalized matching hall
-            for (var i in dorm_data["dorm_list"]) {
-                var hallname = dorm_data["dorm_list"][i];
-                if (hallname.toLowerCase() == query.toLowerCase())
-                {
-                    foundMatch = hallname;
-                    break;
-                }
-            }
-            if (!foundMatch) {
-                shakeElement($("#dorm_search"));
-                return;
-            }
-            // Else, we have a valid dorm. Make ajax call and generate the popup
-            var dorm_graph;
-            $.when($.get('/dorm-graph/', {dorm: foundMatch}, function(result){
-                dorm_graph = result;
+            var myStories;   // list of stories
+            var numReturned; // number of stories returned
+            var numRequested = 25; // number of stories requested
+            $.when($.get('/get-stories/', {number: numRequested}, function(result){
+                myStories = result['ls'];
+                numReturned = result['size'];
             })).then(function(){
-                // bootbox.dialog({
-                //     message: '<div class="row">'
-                //                 + '<div class="col-xs-12">'
-                //                     + '<h1 class="graph-title">' + query + '</h1>'
-                //                     + '<div id="dorm-graph">'
-                //                     + '</div>'
-                //                 + '</div>'
-                //             + '</div>',
-                //     onEscape: function() {},
-                // });
+                bootbox.dialog({
+                    message: '<div class="row">'
+                                + '<div class="col-xs-12 text-center">'
+                                    + '<h1 class="storybox-title"></h1>'
+                                        + '<btn class="btn btn-sm btn-default" style="float: left;" id="prevBtn">'
+                                        + '< Prev' + '</btn>'
+                                        + '<btn class="btn btn-sm btn-default" style="float: right;" id="nextBtn">'
+                                        + 'Next >' + '</btn>'
+                                + '</div>'
+                            + '</div>'
+                            + '<hr>'
+                            + '<div class="row storybox">'
+                                + '<div class="col-lg-7 col-sm-6">'
+                                    + '<hr class="section-heading-spacer-left">'
+                                    + '<div class="clearfix"></div>'
+                                    + '<i class="fa fa-quote-left"></i>'
+                                    + '<p id="storybox-text">Text/story here</p>'
+                                    + '<i class="fa fa-quote-right" style="float: right;"></i><br>'
+                                    + '<h5 id="storybox-author">- Name</h5>'
+                                    + '<hr class="section-heading-spacer-right">'
+                                    + '<div class="clearfix"></div>'
+                                + '</div>'
+                                + '<div class="col-lg-5 col-sm-6">'
+                                    + '<img class="img-responsive" id="storybox-img" src="https://scontent-iad3-1.xx.fbcdn.net/hphotos-xaf1/v/t1.0-9/10383633_10205030410534292_1403786911386828670_n.jpg?oh=ada2a0476abb5b42f6ea33cecf90f7f9&oe=56F6DB20" alt="">'
+                                + '</div>'
+                            + '</div>'
+                            ,
+                    onEscape: function() {},
+                });
+                
+                // Shuffles the array
+                function shuffle(array) {
+                  var currentIndex = array.length, temporaryValue, randomIndex ;
 
-                var $divs = $('#graph'),
-                    $buttons = $('#dorm_search_btn'),
-                    $hb = $('html, body');
+                  // While there remain elements to shuffle...
+                  while (0 !== currentIndex) {
 
-                $buttons.on('click', function ()
-                {
-                    var $this = $(this),
-                        index = $buttons.index(this);
+                    // Pick a remaining element...
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex -= 1;
 
-                    $hb.animate({scrollTop: $divs.eq(index).offset().top + 'px'});
+                    // And swap it with the current element.
+                    temporaryValue = array[currentIndex];
+                    array[currentIndex] = array[randomIndex];
+                    array[randomIndex] = temporaryValue;
+                  }
+
+                  return array;
+                }
+
+                shuffle(myStories);
+                
+                var imgurl;
+                var text;
+                var author;
+                var index = -1;
+
+                $('#nextBtn').click(function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    index = (index + 1) % numReturned;
+                    if (numReturned == 0) {
+                        imgurl = "https://scontent-iad3-1.xx.fbcdn.net/hphotos-xfa1/v/t1.0-9/12278784_1093380217363614_4519440215879055140_n.jpg?oh=6fb267364b81e16105db276da2c87437&oe=56E5BCE7";
+                        text = "china";
+                        author = "the donald";
+                    }
+                    else {
+                        imgurl = myStories[index]['imgurl'];
+                        text = myStories[index]['quote'];
+                        author = myStories[index]['author'];
+                    }
+                    $("#storybox-img").attr("src", imgurl);
+                    $("#storybox-text").text(text);
+                    $("#storybox-author").text(author);
                 });
 
-
-                var graph = dorm_graph;
-                var width = 768, height = 500; // not used rn 
-                var color = d3.scale.category10();
-                var force = d3.layout.force()
-                    .charge(-200)
-                    .linkDistance(50)
-                    .size([width, height]);
-
-                // Non-responsive version 
-                // var svg = d3.select("#dorm-graph")
-                //     .append("svg")
-                //     .attr("width", width)
-                //     .attr("height", height);
-                var svg = d3.select("#dorm-graph")
-                       .append("div")
-                       .classed("svg-container", true) //container class to make it responsive
-                       .append("svg")
-                       //responsive SVG needs these 2 attributes and no width and height attr
-                       .attr("preserveAspectRatio", "xMinYMin meet")
-                       .attr("viewBox", "-400 -300 1600 1200")
-                       //class to make it responsive
-                       .classed("svg-content-responsive", true); 
-                force.nodes(graph["nodes"]).links(graph["links"]).start();
-                var link = svg.selectAll(".link")
-                      .data(graph["links"])
-                      .enter().append("line")
-                      .attr("class", "link")
-                      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
-
-                var node = svg.selectAll(".node")
-                      .data(graph["nodes"])
-                      .enter().append("circle")
-                      .attr("class", "node")
-                      .attr("r", 10)
-                      .style("fill", function(d) { return color(d.group); })
-                      .call(force.drag);
-
-                node.append("title")
-                      .text(function(d) { return d.name; });
-
-                force.on("tick", function() {
-                    link.attr("x1", function(d) { return d.source.x; })
-                        .attr("y1", function(d) { return d.source.y; })
-                        .attr("x2", function(d) { return d.target.x; })
-                        .attr("y2", function(d) { return d.target.y; });
-
-                    node.attr("cx", function(d) { return d.x; })
-                        .attr("cy", function(d) { return d.y; });
+                $('#prevBtn').click(function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    index = (index - 1);
+                    if (index < 0) 
+                        index = numReturned - 1;
+                    if (numReturned == 0) {
+                        imgurl = "https://scontent-iad3-1.xx.fbcdn.net/hphotos-xaf1/v/t1.0-9/10383633_10205030410534292_1403786911386828670_n.jpg?oh=ada2a0476abb5b42f6ea33cecf90f7f9&oe=56F6DB20";
+                        text = "the fattest chicken is the first to go";
+                        author = "them";
+                    }
+                    else {
+                        imgurl = myStories[index]['imgurl'];
+                        text = myStories[index]['quote'];
+                        author = myStories[index]['author'];
+                    }
+                    $("#storybox-img").attr("src", imgurl);
+                    $("#storybox-text").text(text);
+                    $("#storybox-author").text(author);
                 });
+
+                // TODO: debug this.
+                $(document).keypress(function(e) {
+                    e.preventDefault();
+                    if (e.which == 37) {
+                        e.preventDefault();
+                        $('#prevBtn').click();
+                    }
+                    else if (e.which == 39) {
+                        e.preventDefault();
+                        $('#nextBtn').click();
+                    }
+                    console.log(e.which);
+                });
+
+                // Call it once at the beginning
+                $('#nextBtn').click();
             });
+        });
+
+        $('#shareBtn').click(function(e){
+            bootbox.dialog({
+                    message: '<div class="row">'
+                                + '<div class="col-xs-12 text-center form-title">'
+                                    + '<h1 class="storybox-title">Share your story</h1>'
+                                    + '<h6 class="tutorial">Complete the form by choosing and answering a question. Make sure to include a valid link to an image (it can be anything related to your story, or be a picture relating to home, or a picture of you). After approval by our admins, it will be appear on this website. </h6>'
+                                + '</div>'
+                            + '</div>'
+                            + '<hr>'
+                            + '<div id="successPopup" class="alert alert-success" role="alert" style="display:none;">Successful submission. Please close pop-up window.</div>'
+                            + '<div id="errorPopup" class="alert alert-danger" role="alert" style="display:none;">Error in submission. Please fix errors and try again.</div>'
+                            + '<div class="row storybox">'
+                                + '<form id="story-form" class="form-horizontal">'
+                                    + "{% csrf_token %}"
+                                    + '<div class="form-group">'
+                                        + '<label for="questionPrompt" class="col-xs-2 control-label">Prompt</label>'
+                                        + '<div class="col-xs-7">'
+                                            + '<input type="text" class="form-control" id="questionPrompt" value="Tell something special about your home." required="True" name="question" readonly>'
+                                        + '</div>'
+                                        + '<btn class="col-xs-2 btn btn-primary btn-sm" id="changePrompt">'
+                                            + 'Get another prompt'
+                                        + '</btn>'
+                                    + '</div>'
+                                    + '<div class="form-group">'
+                                        + '<div class="col-xs-12">'
+                                            + '<textarea rows="4" name="fullstory" form="story-form" maxlength="2000" required="True" wrap="soft" id="fullstoryText">'
+                                                + '  Enter your story here </textarea>'   
+                                        + '</div>'                                 
+                                    + '</div>'
+                                    + '<div class="form-group">'
+                                        + '<label for="author" class="col-xs-3 control-label">Name (optional)</label>'
+                                        + '<div class="col-xs-8">'
+                                            + '<input type="text" class="form-control" id="authorInput" value="Anonymous" name="author" maxlength="100">'
+                                        + '</div>'
+                                    + '</div>'
+                                    + '<div class="form-group">'
+                                        + '<label for="home" class="col-xs-3 control-label">Home (optional)</label>'
+                                        + '<div class="col-xs-8">'
+                                            + '<input type="text" class="form-control" id="homeInput" placeholder="Enter where your home is" name="home" maxlength="100">'
+                                        + '</div>'
+                                    + '</div>'
+                                    + '<div class="form-group">'
+                                        + '<label for="Image URL" class="col-xs-3 control-label">Image (required)</label>'
+                                        + '<div class="col-xs-8">'
+                                            + '<input type="text" class="form-control" id="imgurlInput" placeholder="Enter a related image url" name="imgurl" maxlength="300" required>'
+                                        + '</div>'
+                                    + '</div>'
+                                    + '<div class="form-group">'
+                                        + '<div class="col-sm-offset-9 col-sm-2">'
+                                            + '<button type="submit" class="btn btn-primary" id="submitSharedStory">Submit</button>'
+                                        + '</div>'
+                                    + '</div>'
+                                + '</form>'
+                            + '</div>'
+                            ,
+                    onEscape: function() {},
+            });
+            
+            $('#submitSharedStory').click(function(e){
+                e.preventDefault();
+                $('#successPopup').hide();
+                $('#errorPopup').hide();
+                var form = $('form[id="story-form"]');
+                $.ajax({
+                    url: "/submit-story/",
+                    type: "POST",
+                    data: $(form).serialize(),
+                    success : function(json) {
+                        if (json["success"]) {
+                            console.log("success");
+                            $('#successPopup').show();
+                            $('#submitSharedStory').attr("disabled", "True");
+
+                        }
+                        else {
+                            console.log("form errors");
+                            $('#errorPopup').show();
+                        }
+                    },
+
+                    error : function(xhr, errmsg, err) {
+                        console.log(errmsg);
+                        $('#errorPopup').show();
+                        // do something
+                    }
+                });
+
+            });
+
         });
     </script>
 </body>

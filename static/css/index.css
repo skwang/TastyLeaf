@@ -1,9 +1,11 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
 /*!
  * CSS adapted from Start Bootstrap - Stylish Portfolio Bootstrap Theme (http://startbootstrap.com)
  * which is code licensed under the Apache License v2.0.
  */
 
 /* Global Styles */
+
 
 html,
 body {
@@ -15,6 +17,11 @@ body {
     font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
+.title {
+    font-family: 'Lato',"Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin-bottom: 5%;
+}
+
 /* Added to make the bootbox dialog bigger */
 @media (min-width: 768px) {
   .bootbox > .modal-dialog {
@@ -23,24 +30,34 @@ body {
   }
 }
 
-/* For the graph */
-#dorm-graph {
-    background-color: white;
+.tutorial {
+    color: black;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.node {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
-
-.link {
-  stroke: #999;
-  stroke-opacity: .6;
-}
-
-.graph-title {
+.storybox-title {
   color:black;
-  padding: 10px;
+}
+
+.storybox {
+    color:black;
+    padding-left:10px;
+}
+
+#storybox-author {
+    text-align: right;
+}
+
+#storybox-text {
+    padding-left:20px;
+    padding-right:20px;
+    margin-bottom: 0;
+}
+
+#fullstoryText {
+    margin-left: 20px;
+    width:90%
 }
 
 /* For making the svg resizable */
@@ -92,16 +109,19 @@ body {
 }
 
 .btn-start {
-    border-radius: 10;
+    border-radius: 5;
     color: #e9e9e9;
-    background-color: rgba(255,143,0,0.85);
+    background-color: rgba(255,143,0,0.85);  /* This is princeton orange */
+    /*background-color: rgba(84,84,84,0.85); *//* This is a dark grey */
+
 }
 
 .btn-start:hover,
 .btn-start:focus,
 .btn-start:active {
     color: #e9e9e9;
-    background-color: rgba(255,143,0,0.95);
+    background-color: rgba(255,143,0,0.95);  /* This is princeton orange */
+    /*background-color: rgba(84,84,84,0.95); *//* This is a dark grey */
 }
 
 .btn-light {
@@ -223,7 +243,7 @@ hr.small {
     position: relative;
     width: 100%;
     height: 100%;
-    background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url(../img/bg.jpg) no-repeat center center scroll;
+    background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url(../img/bg1.jpg) no-repeat center center scroll;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
