@@ -1,1 +1,1 @@
-web: gunicorn tinydonut.wsgi --log-file -
+web: gunicorn tastyleaf.wsgi --log-file -
