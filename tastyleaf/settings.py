@@ -25,7 +25,7 @@ SECRET_KEY = '28km@%*64m+_!3@kum$t+j=&ha%97+_0b_-e_vw(=lp1qw6t0d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -76,23 +76,24 @@ WSGI_APPLICATION = 'tastyleaf.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 ### HEROKU DB SETTINGS: Comment this out when running on local, but uncomment when using these settings to run on heroku
-# import dj_database_url
-# DATABASES = {}
-# DATABASES['default'] =  dj_database_url.config(default='INSERTURLHERE')
-# DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+import dj_database_url
+DB_URL = os.environ['TL_DB_URL'] # need to set this on the Heroku server, i.e. heroku config:add DB_URL=[inserturl]
+DATABASES = {}
+DATABASES['default'] =  dj_database_url.config(default=DB_URL)
+DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
 ### end of Heroku server db settings
 
 ### LOCAL DB SETTINGS: Uncomment for local 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'tastyleaf_db',
-        'USER': 'tastyleaf_user',
-        'PASSWORD' : 'password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'tastyleaf_db',
+#         'USER': 'tastyleaf_user',
+#         'PASSWORD' : 'password',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 ### end of LOCAL DB SETTINGS
 
 
