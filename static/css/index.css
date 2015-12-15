@@ -37,7 +37,7 @@ body {
 }
 
 .storybox-title {
-  color:black;
+  color:black; 
 }
 
 .storybox {
@@ -46,7 +46,7 @@ body {
 }
 
 #storybox-question {
-    color:black;
+    color:black; 
     padding-left:10px;
 }
 
