@@ -45,6 +45,12 @@ body {
     padding-left:10px;
 }
 
+#storybox-question {
+    color:black;
+    padding-left:10px;
+}
+
+
 #storybox-author {
     text-align: right;
 }

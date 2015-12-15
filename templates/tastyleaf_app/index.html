@@ -95,8 +95,10 @@
                                 + '</div>'
                             + '</div>'
                             + '<hr>'
+                            + '<div id="storybox-question"/></div>'
                             + '<div class="row storybox">'
                                 + '<div class="col-lg-7 col-sm-6">'
+                                    
                                     + '<hr class="section-heading-spacer-left">'
                                     + '<div class="clearfix"></div>'
                                     + '<i class="fa fa-quote-left"></i>'
@@ -147,17 +149,20 @@
                     index = (index + 1) % numReturned;
                     if (numReturned == 0) {
                         imgurl = "https://scontent-iad3-1.xx.fbcdn.net/hphotos-xfa1/v/t1.0-9/12278784_1093380217363614_4519440215879055140_n.jpg?oh=6fb267364b81e16105db276da2c87437&oe=56E5BCE7";
-                        text = "china";
+                        text = "I just want to make America great again.";
                         author = "the donald";
+                        question = "Why become president?"
                     }
                     else {
                         imgurl = myStories[index]['imgurl'];
                         text = myStories[index]['quote'];
                         author = myStories[index]['author'];
+                        question = myStories[index]['question'];
                     }
                     $("#storybox-img").attr("src", imgurl);
                     $("#storybox-text").text(text);
                     $("#storybox-author").text(author);
+                    $("#storybox-question").text(question);
                 });
 
                 $('#prevBtn').click(function(e){
@@ -170,29 +175,28 @@
                         imgurl = "https://scontent-iad3-1.xx.fbcdn.net/hphotos-xaf1/v/t1.0-9/10383633_10205030410534292_1403786911386828670_n.jpg?oh=ada2a0476abb5b42f6ea33cecf90f7f9&oe=56F6DB20";
                         text = "the fattest chicken is the first to go";
                         author = "them";
+                        question = "what do they say?"
                     }
                     else {
                         imgurl = myStories[index]['imgurl'];
                         text = myStories[index]['quote'];
                         author = myStories[index]['author'];
+                        question = myStories[index]['question'];
                     }
                     $("#storybox-img").attr("src", imgurl);
                     $("#storybox-text").text(text);
                     $("#storybox-author").text(author);
+                    $("#storybox-question").text(question);
                 });
 
                 // TODO: debug this.
-                $(document).keypress(function(e) {
-                    e.preventDefault();
+                $(document).keydown(function(e) {
                     if (e.which == 37) {
-                        e.preventDefault();
                         $('#prevBtn').click();
                     }
                     else if (e.which == 39) {
-                        e.preventDefault();
                         $('#nextBtn').click();
                     }
-                    console.log(e.which);
                 });
 
                 // Call it once at the beginning
