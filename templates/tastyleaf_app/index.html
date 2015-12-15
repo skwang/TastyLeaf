@@ -292,6 +292,16 @@
                 });
 
             });
+            $('#changePrompt').click(function(e){
+                e.preventDefault();
+                var questions = [
+                                "Tell something special about your home.", 
+                                "What is an object that reminds you of home?",
+                                "What is your fondest memory of your home?",
+                                "What is home to you?"];
+                var selected = questions[Math.floor(Math.random()*questions.length)];
+                $('#questionPrompt').val(selected);
+            })
 
         });
     </script>
